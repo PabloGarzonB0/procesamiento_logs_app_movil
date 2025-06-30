@@ -1,0 +1,100 @@
+# Antes de realizar la simulacion del procesamiento se registraron los datos en grudo manualmente, esos datos eran los siguientes:
+  DATOS DE PRUEBA INICIAL
+    dispositivo = Info_dispositivo( os="Android",model="Pixel 7",app_version="1.0.2" )
+    locacion = Location(lat=4.6, lon=-76.08)
+    fecha_evento = "2025-06-27T16:45:00Z"
+
+    ### PRUEBA 1: SERIALIZACION DE DATOS####
+    evento_vista = ProductViewEvent(
+        # Parametros del padre
+        fecha_accion=fecha_evento,
+        user_id="U123",
+        sesion_id="S001",
+        info_dispositivo=dispositivo,
+        estado_evento=True,
+        locacion=locacion,
+
+        # Parametros de subclase
+        product_id="P001",
+        product_name="Laptop Lenovo",
+        category="Computadoras",
+        price=5231.42)
+
+    evento_anadir_carrito = AddTocartEvent(
+        # Parametros del padre
+        fecha_accion=datetime.now(),   #fecha_evento,
+        user_id="U123",
+        sesion_id="S001",
+        info_dispositivo=dispositivo,
+        estado_evento=True,
+        locacion=locacion,
+        # Parametros de la subclase
+        product_id="P005",
+        cantidad=2,
+        price=1200.00,
+        cart_id="CART999FR23S"
+    )
+
+    # Validar y serializar
+    print("Es válido (view):", evento_vista.is_valid())
+    print("Es válido (cart):", evento_anadir_carrito.is_valid())
+
+    print("Evento de vista de producto: \n",evento_vista.to_dict())
+    print("Evento de anadir al carrito: \n",evento_anadir_carrito.to_dict() )
+### PRUEBA 2: Implementacion de metodo factory ###
+    ## Generacion de eventos manuales
+    raw_view_data1 = {
+        "tipo_evento": "ProductViewed",
+        "fecha_accion": "2023-10-05T14:30:00Z",
+        "user_id": "user-12345",
+        "sesion_id": "session-abcde",
+        "info_dispositivo": {
+            "os": "Android",
+            "model": "Samsung Galaxy S22",
+            "app_version": "4.2.0"
+        },
+        "propiedades_evento": {
+            "product_id": "",
+            "product_name": "Smart Watch",
+            "category": "Wearables",
+            "price": 299.99
+        },
+        "locacion": {
+            "lat": 40.71427,
+            "lon": -74.00597
+        }
+    }
+    raw_view_data2 = {
+        "tipo_evento": "AddTocart",
+        "fecha_accion": "2023-10-05T14:30:00Z",
+        "user_id": "user-12345",
+        "sesion_id": "session-abcde",
+        "info_dispositivo": {
+            "os": "ios",
+            "model": "Phone 15 x plus",
+            "app_version": "11.1.0"
+        },
+        "propiedades_evento": {
+            "product_id": "prod-67890",
+            "product_name": "Smart TV LG",
+            "price": 1299.99,
+            "cantidad": 4,
+            "cart_id": "asdf3245Fds",
+        },
+        "locacion": {
+            "lat": 22.7427,
+            "lon": 7.0597
+        }
+    }
+
+        # FACTORIA DE EVENTOS
+    view_event1 = EventFactory.crear_evento(raw_view_data1)
+    view_event2 = EventFactory.crear_evento(raw_view_data2)
+
+    # Verificar tipo y propiedades
+    print("Tipo de producto: ", type(view_event2))
+    print("Nombre del producto: ", view_event2.product_name)
+    print("Datos del productos validos: ", view_event2.is_valid())
+
+    # Serializar a diccionario
+    print(view_event2.to_dict())
