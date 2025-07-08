@@ -87,32 +87,24 @@ class ProductDetailsValidator(BaseValidador):
     """Valida detalles específicos de eventos de producto"""
 
     def validate(self, event: 'LogEvent') -> bool:
-        """Implementación concreta del método validate"""
         # Solo aplica a eventos relacionados con productos
         if event.tipo_evento not in ["ProductViewed", "AddTocart"]:
-            # Si no es evento de producto, pasar al siguiente validador
             if self.next_validador:
                 return self.next_validador.validate(event)
             return True
 
-        # Verificar que exista product_id en las propiedades
-        if not hasattr(event, 'propiedades_evento') or 'product_id' not in event.event_properties:
-            raise ValidationError("product_id es obligatorio para eventos de producto", "product_id")
-
-        product_id = event.event_properties['product_id']
-        if not product_id or not isinstance(product_id, str) or product_id.strip() == "":
-            raise ValidationError("product_id debe ser un string no vacío", "product_id")
+        # Verificar que exista product_id como atributo
+        if not hasattr(event, 'product_id') or not event.product_id or not isinstance(event.product_id, str) or event.product_id.strip() == "":
+            raise ValidationError("product_id es obligatorio y debe ser un string no vacío para eventos de producto", "product_id")
 
         # Validación adicional para eventos de carrito
         if event.tipo_evento == "AddTocart":
-            if 'cantidad' not in event.event_properties:
+            if not hasattr(event, 'cantidad'):
                 raise ValidationError("cantidad es obligatorio para eventos AddToCart", "cantidad")
+            cantidad = event.cantidad
+            if not isinstance(cantidad, (int, float)) or cantidad <= 0:
+                raise ValidationError("cantidad debe ser un número positivo", "cantidad")
 
-            cantidad = event.event_properties['cantidad']
-            if not isinstance(cantidad, int) or cantidad <= 0:
-                raise ValidationError("cantidad debe ser un entero positivo", "cantidad")
-
-        # Pasar al siguiente validador en la cadena si existe
         if self.next_validador:
             return self.next_validador.validate(event)
 

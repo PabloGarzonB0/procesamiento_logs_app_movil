@@ -11,7 +11,7 @@ if __name__ == "__main__":
     validator_chain = EventValidatorChain()
     # Anadir validadores a la cadena
     validator_chain.add_validator(NotNullValidator(["tipo_evento","fecha_accion","user_id","sesion_id"]))
-    validator_chain.add_validator(EventTypeValidator(["ProductViewed", "AddTocart", "Purchase"]))
+    validator_chain.add_validator(EventTypeValidator(["ProductViewed", "AddTocart", "LogEvent"]))
     validator_chain.add_validator(ProductDetailsValidator())
 
     validator_chain.build_chain()

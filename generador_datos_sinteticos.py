@@ -5,20 +5,20 @@ import random
 def generar_eventos_prueba(n: int = 10) -> list:
     """Genera una lista de eventos de prueba con datos válidos e inválidos"""
     eventos = []
-    tipos_evento = ["ProductViewed", "AddTocart", "Evento Desconocido"]
+    tipos_evento = ["ProductViewed", "AddTocart", "LogEvent", "EventDesconocido"]
     modelos_dispositivos = ["iPhone 15", "Samsung Galaxy S23", "Google Pixel 7", "Xiaomi Mi 11", "Huawei P50"]
     productos = [
         {"id": "prod-001", "nombre": "Laptop Gaming", "categoria": "Computación", "precio": 1299.99},
         {"id": "prod-002", "nombre": "Smartphone", "categoria": "Electrónicos", "precio": 799.99},
         {"id": "prod-003", "nombre": "Tablet", "categoria": "Electrónicos", "precio": 399.99},
         {"id": "prod-004", "nombre": "Auriculares", "categoria": "Audio", "precio": 199.99},
-        {"id": "por-043", "nombre": "Producto Inválido", "categoria": "", "precio": -99.99},
+        {"id": "prod-012", "nombre": "Producto Inválido", "categoria": "", "precio": 39.99},
     ]
 
     # Generar n eventos
     for i in range(n):
         # Determinar si el evento será válido (70% de probabilidad)
-        es_valido = random.random() < 0.7
+        es_valido = random.random() < 0.5
 
         # Seleccionar tipo de evento
         tipo_evento = random.choice(tipos_evento)
@@ -52,7 +52,7 @@ def generar_eventos_prueba(n: int = 10) -> list:
             "product_id": producto["id"] if es_valido else "",
             "product_name": producto["nombre"],
             "category": producto["categoria"],
-            "price": producto["precio"] if es_valido else -random.random() * 100
+            "price": producto["precio"] if es_valido else random.random() * 100
             }
         elif tipo_evento == "AddTocart":
             producto = random.choice(productos)
@@ -60,24 +60,19 @@ def generar_eventos_prueba(n: int = 10) -> list:
                 "product_id": producto["id"] if es_valido else "prod-inválido",
                 "product_name" : producto["nombre"],
                 "price": producto["precio"],
-                "cantidad": random.randint(1, 5) if es_valido else random.randint(-5, 0),
+                "cantidad": random.randint(1, 5),
                 "cart_id": f"cart-{random.randint(1000, 9999)}"
             }
-
-        elif tipo_evento == "Purchase":
-            evento["propiedades_evento"] = {
-            "order_id": f"order-{random.randint(10000, 99999)}",
-            "total": round(random.uniform(10, 1000), 2),
-            "payment_method": random.choice(["credit_card", "paypal", "cash"])
-            }
+            
+        else: pass
 
         # Introducir errores aleatorios
         if not es_valido:
-            if  random.random() < 0.3:
+            if  random.random() < 0.2:
                 campo = random.choice(["tipo_evento", "fecha_accion", "user_id", "sesion_id"])
                 evento[campo] = None if random.random() < 0.5 else ""
         # 20% de probabilidad de tipo de evento inválido
-        if random.random() < 0.2:
+        if random.random() < 0.1:
             evento["tipo_evento"] = "EventoDesconocido"
 
         eventos.append(evento)

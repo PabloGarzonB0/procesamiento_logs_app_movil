@@ -30,7 +30,7 @@ class EventFactory:  #Patron de diseno factory
                 tipo_evento=tipo_evento,
                 **args_comunes
             )
-# --------------  METODOS GENERALES PARA DTODO LOS EVENTOS ----------------
+# --------------  METODOS GENERALES PARA TODO LOS EVENTOS ----------------
     @staticmethod
     def _crear_info_dispositivo(datos_dispositivo:dict) -> Info_dispositivo:
         """Creacion de objetos de tipo dispositivo desde diccionario"""

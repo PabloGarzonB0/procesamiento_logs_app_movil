@@ -44,6 +44,10 @@ class LogEvent:
         self.estado_evento = estado_evento
         self.locacion = locacion
 
+    def is_valid(self) -> bool:
+        """Validación base que siempre retorna True"""
+        return True
+
     def to_dict(self) -> Dict:
         """Serializa el evento a un diccionario"""
         if isinstance(self.fecha_accion, datetime):
@@ -81,7 +85,15 @@ class ProductViewEvent(LogEvent):
             self.category is not None,
             self.price >= 0
         ])
-
+    def to_dict(self) -> Dict:
+        base = super().to_dict()
+        base.update({
+            "product_id": self.product_id,
+            "product_name": self.product_name,
+            "category": self.category,
+            "price": self.price
+        })
+        return base
 
 
 class AddTocartEvent(LogEvent):
@@ -106,3 +118,14 @@ class AddTocartEvent(LogEvent):
             self.cantidad is not None,
             self.cart_id is not None
         ])
+
+    def to_dict(self) -> Dict:
+        base = super().to_dict()
+        base.update({
+            "product_id": self.product_id,
+            "product_name": self.product_name,
+            "price": self.price,
+            "cantidad": self.cantidad,
+            "cart_id": self.cart_id
+        })
+        return base
